@@ -2,7 +2,7 @@
 set -e # Exit on any child process error
 
 export STACK_NAME=domino-master-backend-api
-export AWS_DEFAULT_REGION=us-east-2
+export AWS_DEFAULT_REGION=us-east-1
 
 echo "Current Building Environment is: $DRONE_BRANCH"
 
