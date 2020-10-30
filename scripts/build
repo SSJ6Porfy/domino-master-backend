@@ -1,0 +1,34 @@
+#!/usr/bin/env bash	
+set -e # Exit on any child process error
+
+source ./scripts/setup_env
+
+npm run clean
+
+mkdir -p dist
+
+echo "Transpile ES6 to CJS"
+npm install
+npm run transpile -- --ignore spec.js
+
+echo "Processing infrastructure template for $DRONE_BRANCH"
+
+cat ./infrastructure/constants/$DRONE_BRANCH.json > ./dist/constants.json
+cat ./dist/constants.json | mustache - ./infrastructure/cloudformation.yaml > ./dist/cloudformation.yaml
+
+echo "Production NPM Install"
+rm -rf ./node_modules
+npm install --production
+
+for i in ./dist/cjs/* ; do
+	if [ -d "$i" ]; then
+		CURRENT_FOLDER=$(basename "$i")
+		echo "Preparing $CURRENT_FOLDER"
+		pushd ./dist/cjs/$CURRENT_FOLDER
+		ln -s ../../../node_modules/
+		popd
+		pushd dist/cjs/$CURRENT_FOLDER
+		zip -q -r ../../$CURRENT_FOLDER.zip .
+		popd
+	fi
+done

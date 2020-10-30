@@ -1,0 +1,38 @@
+{
+  "name": "domino-master-backend",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/cjs/index.js",
+  "scripts": {
+    "build": "scripts/build",
+    "clean": "rm -rf coverage/ dist/",
+    "deploy": "scripts/deploy",
+    "postinstall": "if [ -z \"$npm_config_production\" ]; then npm outdated; exit 0; fi",
+    "postversion": "git push --follow-tags",
+    "test": "npm run transpile && JASMINE_CONFIG_PATH=jasmine.json jasmine",
+    "transpile": "npm run clean && babel src --out-dir dist/cjs --copy-files",
+    "update": "npx npm-check -uE"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SSJ6Porfy/domino-master-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SSJ6Porfy/domino-master-backend/issues"
+  },
+  "homepage": "https://github.com/SSJ6Porfy/domino-master-backend#readme",
+  "devDependencies": {
+    "@babel/cli": "7.12.1",
+    "@babel/core": "7.12.3",
+    "@babel/preset-env": "7.12.1",
+    "jasmine": "3.6.3",
+    "mustache": "4.0.1"
+  },
+  "dependencies": {
+    "aws-sdk": "2.783.0",
+    "node-fetch": "^2.6.0"
+  }
+}
