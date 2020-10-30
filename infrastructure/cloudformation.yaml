@@ -55,10 +55,6 @@ Resources:
               Federated: "cognito-identity.amazonaws.com"
             Action: 
               - "sts:AssumeRoleWithWebIdentity"
-            Condition:
-              StringEquals: 
-                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
-                "cognito-identity.amazonaws.com:amr": authenticated
         Policies:
           - PolicyName: "CognitoAuthorizedPolicy"
             PolicyDocument: 
@@ -77,6 +73,9 @@ Resources:
 
 # Assigns the roles to the Identity Pool
   IdentityPoolRoleMapping:
+    DependsOn: 
+      - CognitoAuthorizedRole
+      - IdentityPool
     Type: "AWS::Cognito::IdentityPoolRoleAttachment"
     Properties:
       IdentityPoolId: !Ref IdentityPool
