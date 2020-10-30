@@ -33,6 +33,16 @@ Resources:
       GenerateSecret: false
       UserPoolId: !Ref UserPool
   
+# Creates a federeated Identity pool
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: !Sub ${AuthName}Identity
+      AllowUnauthenticatedIdentities: true
+      CognitoIdentityProviders: 
+        - ClientId: !Ref UserPoolClient
+      ProviderName: !GetAtt UserPool.ProviderName
+
   CognitoAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
