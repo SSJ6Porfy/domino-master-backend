@@ -58,18 +58,18 @@ Resources:
         Policies:
           - PolicyName: "CognitoAuthorizedPolicy"
             PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - Effect: "Allow"
-                Action:
-                - "mobileanalytics:PutEvents"
-                - "cognito-sync:*"
-                - "cognito-identity:*"
-                Resource: "*"
-              - Effect: "Allow"
-                Action:
-                - "lambda:InvokeFunction"
-                Resource: "*"
+              Version: "2012-10-17"
+              Statement: 
+                - Effect: "Allow"
+                  Action:
+                  - "mobileanalytics:PutEvents"
+                  - "cognito-sync:*"
+                  - "cognito-identity:*"
+                  Resource: "*"
+                - Effect: "Allow"
+                  Action:
+                  - "lambda:InvokeFunction"
+                  Resource: "*"
 
 # Assigns the roles to the Identity Pool
   IdentityPoolRoleMapping:
