@@ -44,6 +44,7 @@ Resources:
       ProviderName: !GetAtt UserPool.ProviderName
 
   CognitoAuthorizedRole:
+    DependsOn: IdentityPool
     Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument: 
@@ -51,7 +52,7 @@ Resources:
         Statement:
           - Effect: "Allow"
             Principal: 
-            Federated: "cognito-identity.amazonaws.com"
+              Federated: "cognito-identity.amazonaws.com"
             Action: 
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
