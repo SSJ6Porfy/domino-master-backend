@@ -16,7 +16,7 @@ echo "Setting up S3 bucket"
 echo "Packaging artifacts"
 aws cloudformation package \
  --template-file "./dist/cloudformation.yaml" \
- --s3-bucket domino-master-backend-api-bucket-$DRONE_BRANCH \
+ --s3-bucket "domino-master-backend-api-bucket-$DRONE_BRANCH" \
  --output-template packaged-sam.yaml \
  --region ${AWS_DEFAULT_REGION}
 
