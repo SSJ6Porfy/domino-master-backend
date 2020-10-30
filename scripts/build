@@ -1,8 +1,6 @@
 #!/usr/bin/env bash	
 set -e # Exit on any child process error
 
-source ./scripts/setup_env
-
 npm run clean
 
 mkdir -p dist
