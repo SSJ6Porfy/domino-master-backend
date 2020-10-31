@@ -7,147 +7,146 @@ Resources:
 # Creates a user pool in cognito for your app to auth against
 # This example requires MFA and validates the phone number to use as MFA
 # Other fields can be added to the schema
-  UserPool:
-    Type: "AWS::Cognito::UserPool"
-    Properties:
-      UserPoolName: DominoMasterUsers-user-pool
-      AutoVerifiedAttributes:
-        - email
-      MfaConfiguration: "OFF"
-      Schema:
-        - Name: name
-          AttributeDataType: String
-          Mutable: true
-          Required: true
-        - Name: email
-          AttributeDataType: String
-          Mutable: false
-          Required: true
+#   UserPool:
+#     Type: "AWS::Cognito::UserPool"
+#     Properties:
+#       UserPoolName: DominoMasterUsers-user-pool
+#       AutoVerifiedAttributes:
+#         - email
+#       MfaConfiguration: "OFF"
+#       Schema:
+#         - Name: name
+#           AttributeDataType: String
+#           Mutable: true
+#           Required: true
+#         - Name: email
+#           AttributeDataType: String
+#           Mutable: false
+#           Required: true
 
-# Creates a User Pool Client to be used by the identity pool
-  UserPoolClient:
-    Type: "AWS::Cognito::UserPoolClient"
-    Properties:
-      ClientName: DominoMasterUsers-client
-      GenerateSecret: false
-      UserPoolId: !Ref UserPool
+# # Creates a User Pool Client to be used by the identity pool
+#   UserPoolClient:
+#     Type: "AWS::Cognito::UserPoolClient"
+#     Properties:
+#       ClientName: DominoMasterUsers-client
+#       GenerateSecret: false
+#       UserPoolId: !Ref UserPool
   
-# Creates a federeated Identity pool
-  IdentityPool:
-    DependsOn: 
-      - UserPoolClient
-      - UserPool
-    Type: "AWS::Cognito::IdentityPool"
-    Properties:
-      IdentityPoolName: DominoMasterUsersIdentity
-      AllowUnauthenticatedIdentities: false
-      CognitoIdentityProviders: 
-        - ClientId: !Ref UserPoolClient
-          ProviderName: !GetAtt UserPool.ProviderName
+# # Creates a federeated Identity pool
+#   IdentityPool:
+#     DependsOn: 
+#       - UserPoolClient
+#       - UserPool
+#     Type: "AWS::Cognito::IdentityPool"
+#     Properties:
+#       IdentityPoolName: DominoMasterUsersIdentity
+#       AllowUnauthenticatedIdentities: false
+#       CognitoIdentityProviders: 
+#         - ClientId: !Ref UserPoolClient
+#           ProviderName: !GetAtt UserPool.ProviderName
 
-  CognitoAuthorizedRole:
-    DependsOn: IdentityPool
-    Type: "AWS::IAM::Role"
+#   CognitoAuthorizedRole:
+#     DependsOn: IdentityPool
+#     Type: "AWS::IAM::Role"
+#     Properties:
+#       AssumeRolePolicyDocument: 
+#         Version: "2012-10-17"
+#         Statement:
+#           - Effect: "Allow"
+#             Principal: 
+#               Federated: "cognito-identity.amazonaws.com"
+#             Action: 
+#               - "sts:AssumeRoleWithWebIdentity"
+#       Policies:
+#         - PolicyName: "CognitoAuthorizedPolicy"
+#           PolicyDocument: 
+#             Version: "2012-10-17"
+#             Statement: 
+#               - Effect: "Allow"
+#                 Action:
+#                 - "mobileanalytics:PutEvents"
+#                 - "cognito-sync:*"
+#                 - "cognito-identity:*"
+#                 Resource: "*"
+#               - Effect: "Allow"
+#                 Action:
+#                 - "lambda:InvokeFunction"
+#                 Resource: "*"
+
+# # Assigns the roles to the Identity Pool
+#   IdentityPoolRoleMapping:
+#     DependsOn: 
+#       - CognitoAuthorizedRole
+#       - IdentityPool
+#     Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+#     Properties:
+#       IdentityPoolId: !Ref IdentityPool
+#       Roles:
+#         authenticated: !GetAtt CognitoAuthorizedRole.Arn
+
+API Gateway
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
     Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
+      DefinitionUri: ../dist/swagger.yaml
+      StageName: v0
+      Variables:
+        LambdaFunctionName: !Ref DominoMasterBackendAPI
+
+  LambdaApiGatewayExecutionPermission:
+    DependsOn: DominoMasterBackendAPI
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt DominoMasterBackendAPI.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref AWS::Region
+          - ':'
+          - !Ref AWS::AccountId
+          - ':'
+          - !Ref ApiGatewayApi
+          - '/*/*'
+
+# Lambda Resources
+  DominoMasterBackendAPI:
+    DependsOn:
+      - DominoMasterBackendAPIExecutionRole
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../dist/domino-master-backend-api.zip
+      FunctionName: dominoMasterBackendAPI
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt DominoMasterBackendAPIExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 300
+      # Environment:
+      #   Variables:
+      #     REACH_BASE_URL: {{{REACH_BASE_URL}}}
+      #     REACH_AUTHORIZATION_TOKEN: {{{REACH_AUTHORIZATION_TOKEN}}}
+
+  DominoMasterBackendAPIExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
         Statement:
-          - Effect: "Allow"
-            Principal: 
-              Federated: "cognito-identity.amazonaws.com"
-            Action: 
-              - "sts:AssumeRoleWithWebIdentity"
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: '/'
       Policies:
-        - PolicyName: "CognitoAuthorizedPolicy"
-          PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - Effect: "Allow"
-                Action:
-                - "mobileanalytics:PutEvents"
-                - "cognito-sync:*"
-                - "cognito-identity:*"
-                Resource: "*"
-              - Effect: "Allow"
-                Action:
-                - "lambda:InvokeFunction"
-                Resource: "*"
-
-# Assigns the roles to the Identity Pool
-  IdentityPoolRoleMapping:
-    DependsOn: 
-      - CognitoAuthorizedRole
-      - IdentityPool
-    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
-    Properties:
-      IdentityPoolId: !Ref IdentityPool
-      Roles:
-        authenticated: !GetAtt CognitoAuthorizedRole.Arn
-
-
-# API Gateway
-  # ApiGatewayApi:
-  #   Type: AWS::Serverless::Api
-  #   Properties:
-  #     DefinitionUri: ../dist/swagger.yaml
-  #     StageName: v0
-  #     Variables:
-  #       LambdaFunctionName: !Ref DominoMasterBackendAPI
-
-  # LambdaApiGatewayExecutionPermission:
-  #   DependsOn: DominoMasterBackendAPI
-  #   Type: AWS::Lambda::Permission
-  #   Properties:
-  #     Action: lambda:InvokeFunction
-  #     FunctionName: !GetAtt DominoMasterBackendAPI.Arn
-  #     Principal: apigateway.amazonaws.com
-  #     SourceArn: !Join
-  #       - ''
-  #       - - 'arn:aws:execute-api:'
-  #         - !Ref AWS::Region
-  #         - ':'
-  #         - !Ref AWS::AccountId
-  #         - ':'
-  #         - !Ref ApiGatewayApi
-  #         - '/*/*'
-
-# Sponsorship API Lambda Resources
-  # DominoMasterBackendAPI:
-  #   DependsOn:
-  #     - DominoMasterBackendAPIExecutionRole
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     CodeUri: ../dist/domino-master-backend-api.zip
-  #     FunctionName: dominoMasterBackendAPI
-  #     Handler: index.handler
-  #     MemorySize: 256
-  #     Role: !GetAtt DominoMasterBackendAPIExecutionRole.Arn
-  #     Runtime: nodejs12.x
-  #     Timeout: 300
-  #     # Environment:
-  #     #   Variables:
-  #     #     REACH_BASE_URL: {{{REACH_BASE_URL}}}
-  #     #     REACH_AUTHORIZATION_TOKEN: {{{REACH_AUTHORIZATION_TOKEN}}}
-
-  # DominoMasterBackendAPIExecutionRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     AssumeRolePolicyDocument:
-  #       Version: '2012-10-17'
-  #       Statement:
-  #         Effect: Allow
-  #         Principal:
-  #           Service: lambda.amazonaws.com
-  #         Action: sts:AssumeRole
-  #     Path: '/'
-  #     Policies:
-  #     - PolicyName: logs
-  #       PolicyDocument:
-  #         Version: '2012-10-17'
-  #         Statement:
-  #         - Effect: Allow
-  #           Action:
-  #           - logs:CreateLogGroup
-  #           - logs:CreateLogStream
-  #           - logs:PutLogEvents
-  #           Resource: arn:aws:logs:*:*:*
+      - PolicyName: logs
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*

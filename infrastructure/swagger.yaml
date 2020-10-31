@@ -8,7 +8,7 @@ basePath: "/v0"
 schemes:
 - "https"
 paths:
-  /sponsorships:
+  /games:
     options:
       consumes:
       - "application/json"
@@ -30,7 +30,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
@@ -47,21 +47,41 @@ paths:
       responses:
         200:
           description: "200 response"
-      security:
-      - cognito_user_pool_authorizer: []
-      x-amazon-apigateway-integration:
-        uri: "arn:aws:apigateway:{{{AWS_DEFAULT_REGION}}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:function:dominoMasterBackendAPI/invocations"
-        passthroughBehavior: "when_no_match"
-        httpMethod: "POST"
-        type: "aws_proxy"
+      # security:
+      # - cognito_user_pool_authorizer: []
+      # x-amazon-apigateway-integration:
+      #   uri: "arn:aws:apigateway:{{{AWS_DEFAULT_REGION}}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:function:dominoMasterBackendAPI/invocations"
+      #   passthroughBehavior: "when_no_match"
+      #   httpMethod: "POST"
+      #   type: "aws_proxy"
+    post:
+      consumes:
+        - application/json
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+      # security:
+      # - cognito_user_pool_authorizer: []
+      # x-amazon-apigateway-integration:
+      #   uri: "arn:aws:apigateway:{{{AWS_DEFAULT_REGION}}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:function:dominoMasterBackendAPI/invocations"
+      #   passthroughBehavior: "when_no_match"
+      #   httpMethod: "POST"
+      #   type: "aws_proxy"
 
-securityDefinitions:
-  cognito_user_pool_authorizer:
-    type: "apiKey"
-    name: "Authorization"
-    in: "header"
-    x-amazon-apigateway-authtype: "cognito_user_pools"
-    x-amazon-apigateway-authorizer:
-      type: "cognito_user_pools"
-      providerARNs: 
-        - "arn:aws:cognito-idp:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:userpool/{{{MISSION_LIFE_COGNITO_USER_POOL_ID}}}"
+# securityDefinitions:
+#   cognito_user_pool_authorizer:
+#     type: "apiKey"
+#     name: "Authorization"
+#     in: "header"
+#     x-amazon-apigateway-authtype: "cognito_user_pools"
+#     x-amazon-apigateway-authorizer:
+#       type: "cognito_user_pools"
+#       providerARNs: 
+#         - "arn:aws:cognito-idp:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:userpool/{{{MISSION_LIFE_COGNITO_USER_POOL_ID}}}"

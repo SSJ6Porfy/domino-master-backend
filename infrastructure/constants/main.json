@@ -1,3 +1,5 @@
 {
-  "AWS_DEFAULT_REGION": "us-east-1"
+  "AWS_DEFAULT_REGION": "us-east-1",
+  "AWS_ACCOUNT_ID": "061783440898",
+  "DOMINO_MASTER_COGNITO_USER_POOL_ID": "us-east-1_dDCp4cviT"
 }
