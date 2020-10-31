@@ -13,6 +13,7 @@ echo "Processing infrastructure template for $DRONE_BRANCH"
 
 cat ./infrastructure/constants/$DRONE_BRANCH.json > ./dist/constants.json
 cat ./dist/constants.json | mustache - ./infrastructure/cloudformation.yaml > ./dist/cloudformation.yaml
+cat ./dist/constants.json | mustache - ./infrastructure/swagger.yaml > ./dist/swagger.yaml
 
 echo "Production NPM Install"
 rm -rf ./node_modules
