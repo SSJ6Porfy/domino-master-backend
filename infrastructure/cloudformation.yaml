@@ -2,7 +2,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Dominoes Master Backend
-AuthName: 'DominoMasterUsers'
 Resources:
 
 # Creates a user pool in cognito for your app to auth against
@@ -11,7 +10,7 @@ Resources:
   UserPool:
     Type: "AWS::Cognito::UserPool"
     Properties:
-      UserPoolName: !Sub ${AuthName}-user-pool
+      UserPoolName: !Sub DominoMasterUsers-user-pool
       AutoVerifiedAttributes:
         - email
       MfaConfiguration: "OFF"
@@ -29,7 +28,7 @@ Resources:
   UserPoolClient:
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: !Sub ${AuthName}-client
+      ClientName: !Sub DominoMasterUsers-client
       GenerateSecret: false
       UserPoolId: !Ref UserPool
   
@@ -37,7 +36,7 @@ Resources:
   IdentityPool:
     Type: "AWS::Cognito::IdentityPool"
     Properties:
-      IdentityPoolName: !Sub ${AuthName}Identity
+      IdentityPoolName: !Sub DominoMasterUsersIdentity
       AllowUnauthenticatedIdentities: true
       CognitoIdentityProviders: 
         - ClientId: !Ref UserPoolClient
