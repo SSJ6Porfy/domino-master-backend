@@ -84,4 +84,4 @@ paths:
 #     x-amazon-apigateway-authorizer:
 #       type: "cognito_user_pools"
 #       providerARNs: 
-#         - "arn:aws:cognito-idp:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:userpool/{{{MISSION_LIFE_COGNITO_USER_POOL_ID}}}"
+#         - "arn:aws:cognito-idp:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:userpool/{{{DOMINO_MASTER_COGNITO_USER_POOL_ID}}}"

@@ -19,15 +19,10 @@ echo "Production NPM Install"
 rm -rf ./node_modules
 npm install --production
 
-for i in ./dist/cjs/* ; do
-	if [ -d "$i" ]; then
-		CURRENT_FOLDER=$(basename "$i")
-		echo "Preparing $CURRENT_FOLDER"
-		pushd ./dist/cjs/$CURRENT_FOLDER
-		ln -s ../../../node_modules/
-		popd
-		pushd dist/cjs/$CURRENT_FOLDER
-		zip -q -r ../../$CURRENT_FOLDER.zip .
-		popd
-	fi
-done
+pushd ./dist/cjs
+ln -s ../../node_modules/
+popd
+
+echo "Packaging Code"
+pushd dist/cjs
+zip -q -r ../domino-master-backend-api.zip .
