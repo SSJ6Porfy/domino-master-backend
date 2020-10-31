@@ -34,16 +34,16 @@ Resources:
   
 # Creates a federeated Identity pool
   IdentityPool:
-    DependsOn: UserPoolClient
+    DependsOn: 
+      - UserPoolClient
+      - UserPool
     Type: "AWS::Cognito::IdentityPool"
     Properties:
       IdentityPoolName: DominoMasterUsersIdentity
       AllowUnauthenticatedIdentities: false
       CognitoIdentityProviders: 
-        - ClientId:
-          Ref: UserPoolClient
-        ProviderName:
-          Fn::GetAtt: [UserPool, ProviderName]
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !GetAtt UserPool.ProviderName
 
   CognitoAuthorizedRole:
     DependsOn: IdentityPool
