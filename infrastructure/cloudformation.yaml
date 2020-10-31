@@ -10,7 +10,7 @@ Resources:
   UserPool:
     Type: "AWS::Cognito::UserPool"
     Properties:
-      UserPoolName: !Sub DominoMasterUsers-user-pool
+      UserPoolName: DominoMasterUsers-user-pool
       AutoVerifiedAttributes:
         - email
       MfaConfiguration: "OFF"
@@ -28,7 +28,7 @@ Resources:
   UserPoolClient:
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: !Sub DominoMasterUsers-client
+      ClientName: DominoMasterUsers-client
       GenerateSecret: false
       UserPoolId: !Ref UserPool
   
