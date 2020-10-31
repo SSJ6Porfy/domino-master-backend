@@ -38,9 +38,12 @@ Resources:
     Type: "AWS::Cognito::IdentityPool"
     Properties:
       IdentityPoolName: DominoMasterUsersIdentity
-      AllowUnauthenticatedIdentities: true
+      AllowUnauthenticatedIdentities: false
       CognitoIdentityProviders: 
-        - ClientId: !Ref UserPoolClient
+        - ClientId:
+          Ref: UserPoolClient
+        ProviderName:
+          Fn::GetAtt: [UserPool, ProviderName]
 
   CognitoAuthorizedRole:
     DependsOn: IdentityPool
