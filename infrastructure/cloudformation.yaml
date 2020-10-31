@@ -84,7 +84,7 @@ Resources:
 #       Roles:
 #         authenticated: !GetAtt CognitoAuthorizedRole.Arn
 
-API Gateway
+# API Gateway
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
