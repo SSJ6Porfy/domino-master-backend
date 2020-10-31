@@ -49,11 +49,11 @@ paths:
           description: "200 response"
       # security:
       # - cognito_user_pool_authorizer: []
-      # x-amazon-apigateway-integration:
-      #   uri: "arn:aws:apigateway:{{{AWS_DEFAULT_REGION}}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:function:dominoMasterBackendAPI/invocations"
-      #   passthroughBehavior: "when_no_match"
-      #   httpMethod: "POST"
-      #   type: "aws_proxy"
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:{{{AWS_DEFAULT_REGION}}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:function:dominoMasterBackendAPI/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
     post:
       consumes:
         - application/json
@@ -69,11 +69,11 @@ paths:
           description: "200 response"
       # security:
       # - cognito_user_pool_authorizer: []
-      # x-amazon-apigateway-integration:
-      #   uri: "arn:aws:apigateway:{{{AWS_DEFAULT_REGION}}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:function:dominoMasterBackendAPI/invocations"
-      #   passthroughBehavior: "when_no_match"
-      #   httpMethod: "POST"
-      #   type: "aws_proxy"
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:{{{AWS_DEFAULT_REGION}}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{{AWS_DEFAULT_REGION}}}:{{{AWS_ACCOUNT_ID}}}:function:dominoMasterBackendAPI/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
 
 # securityDefinitions:
 #   cognito_user_pool_authorizer:
