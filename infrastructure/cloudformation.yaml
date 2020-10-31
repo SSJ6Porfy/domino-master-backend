@@ -40,7 +40,6 @@ Resources:
       AllowUnauthenticatedIdentities: true
       CognitoIdentityProviders: 
         - ClientId: !Ref UserPoolClient
-        ProviderName: !GetAtt UserPool.ProviderName
 
   CognitoAuthorizedRole:
     DependsOn: IdentityPool
